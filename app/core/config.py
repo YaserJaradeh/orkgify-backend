@@ -1,26 +1,25 @@
-from typing import List, Union
+import os
+from typing import List
 
-from pydantic import AnyHttpUrl, BaseSettings, validator
 
-
-class Settings(BaseSettings):
+class Settings:
     PROJECT_NAME: str
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: List[str]
     OPENAI_API_KEY: str
     ORKG_HOST: str
-    VERBOSE: bool = False
+    VERBOSE: bool
 
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
-            return v
-        raise ValueError(v)
-
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
+    def __init__(self):
+        self.PROJECT_NAME = os.getenv("PROJECT_NAME", "ORKGify API")
+        self.BACKEND_CORS_ORIGINS = (
+            os.getenv("BACKEND_CORS_ORIGINS", "[]")
+            .replace("]", "")
+            .replace("[", "")
+            .split(",")
+        )
+        self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+        self.ORKG_HOST = os.getenv("ORKG_HOST", "https://orkg.org")
+        self.VERBOSE = os.getenv("VERBOSE", "False").lower() == "true"
 
 
 settings = Settings()
