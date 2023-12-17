@@ -6,6 +6,7 @@ class Settings:
     PROJECT_NAME: str
     BACKEND_CORS_ORIGINS: List[str]
     OPENAI_API_KEY: str
+    ANTHROPIC_API_KEY: str
     ORKG_HOST: str
     VERBOSE: bool
 
@@ -18,6 +19,7 @@ class Settings:
             .split(",")
         )
         self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+        self.ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
         self.ORKG_HOST = os.getenv("ORKG_HOST", "https://orkg.org")
         self.VERBOSE = os.getenv("VERBOSE", "False").lower() == "true"
 
