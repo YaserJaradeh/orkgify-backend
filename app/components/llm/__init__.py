@@ -1,3 +1,3 @@
-from base import LLMConnector, LLMStrategy
-from claude import Claude21Strategy
-from gpt import ChatGPT16KStrategy, GPT4Strategy
+from app.components.llm.base import LLMConnector, LLMStrategy
+from app.components.llm.claude import Claude21Strategy
+from app.components.llm.gpt import ChatGPT16KStrategy, GPT4Strategy

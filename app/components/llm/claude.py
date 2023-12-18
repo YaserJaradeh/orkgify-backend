@@ -1,6 +1,6 @@
 from anthropic import AI_PROMPT, HUMAN_PROMPT, Anthropic
 
-from app.components import LLMStrategy
+from app.components.llm.base import LLMStrategy
 from app.core.config import settings
 
 
@@ -9,7 +9,8 @@ class Claude21Strategy(LLMStrategy):
     client: Anthropic = None
 
     def __init__(self):
-        self.client = Anthropic(api_key=settings.OPENAI_API_KEY)
+        self.client = Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+        self.keywords = ["temperature", "max_tokens_to_sample"]
 
     def execute(self, **kwargs) -> str:
         if any([not kwargs.get(key) for key in ["system_prompt", "user_prompt"]]):
@@ -24,10 +25,13 @@ class Claude21Strategy(LLMStrategy):
                 f"Executing strategy with system_prompt={system_prompt} and user_prompt={user_prompt}"
             )
 
+        # remove arguments in kwargs that are not in the keywords list
+        kwargs = {key: value for key, value in kwargs.items() if key in self.keywords}
+
         # Make the actual request to the OpenAI API
         response = self.client.completions.create(
             model=self.MODEL,
-            prompt=f"{AI_PROMPT} {system_prompt} {HUMAN_PROMPT} {user_prompt} {AI_PROMPT}",
+            prompt=f"{system_prompt}{HUMAN_PROMPT} {user_prompt}{AI_PROMPT}",
             **kwargs,
         )
 

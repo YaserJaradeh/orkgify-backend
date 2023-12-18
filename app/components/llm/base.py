@@ -3,6 +3,8 @@ from typing import Callable, List, Optional, Tuple
 
 
 class LLMStrategy(ABC):
+    keywords: List[str] = []
+
     def __call__(self, **kwargs) -> str:
         """
         Calls the strategy, shorthand for execute

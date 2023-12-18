@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.routers import llms
 
 
 def get_application():
@@ -27,8 +28,7 @@ def _configure_cors_policy(app):
 
 
 def __configure_routers(app):
-    # TODO: add routers here
-    pass
+    app.include_router(llms.router)
 
 
 def _save_openapi_specification(app):

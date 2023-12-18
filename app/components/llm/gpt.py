@@ -1,6 +1,8 @@
+from typing import List, Optional
+
 from openai import OpenAI
 
-from app.components import LLMStrategy
+from app.components.llm.base import LLMStrategy
 from app.core.config import settings
 
 
@@ -11,6 +13,7 @@ class GPTStrategy(LLMStrategy):
     def __init__(self, model: str):
         self.model = model
         self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.keywords = ["temperature", "max_tokens", "top_p", "frequency_penalty", "presence_penalty"]
 
     def execute(self, **kwargs) -> str:
         if any([not kwargs.get(key) for key in ["system_prompt", "user_prompt"]]):
@@ -24,6 +27,9 @@ class GPTStrategy(LLMStrategy):
             print(
                 f"Executing strategy with system_prompt={system_prompt} and user_prompt={user_prompt}"
             )
+
+        # remove arguments in kwargs that are not in the keywords list
+        kwargs = {key: value for key, value in kwargs.items() if key in self.keywords}
 
         # Make the actual request to the OpenAI API
         response = self.client.chat.completions.create(
